@@ -273,11 +273,22 @@ colors = list(map(__hex2rgb, ["000000",
 "eeeeee"]))
 
 
-def __distance(a, b):
+def __euclidean_distance(a, b):
     x = (a[0] - b[0]) ** 2
     y = (a[1] - b[1]) ** 2
     z = (a[2] - b[2]) ** 2
     return sqrt(x + y + z)
+
+
+def __weighted_euclidean_distance(a, b):
+    xmean = (a[0] - b[0]) / 2
+    x = (a[0] - b[0]) ** 2
+    y = (a[1] - b[1]) ** 2
+    z = (a[2] - b[2]) ** 2
+    xw = 2 + xmean / 256
+    yw = 4
+    zw = 2 + (255 - xmean) / 256
+    return sqrt(xw * x + yw * y + zw * z)
 
 
 def from_rgb(r, g=None, b=None):
@@ -288,7 +299,7 @@ def from_rgb(r, g=None, b=None):
     best = {}
 
     for index, item in enumerate(colors):
-        d = __distance(item, c)
+        d = __weighted_euclidean_distance(item, c)
         if(not best or d <= best['distance']):
             best = {'distance': d, 'index': index}
 
